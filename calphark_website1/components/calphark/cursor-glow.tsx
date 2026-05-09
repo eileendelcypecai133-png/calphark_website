@@ -2,11 +2,16 @@
 
 import { useEffect, useRef, useState } from "react"
 
+// Cursor Glow - Subtle, intentional presence indicator
+// The principle: "the system responds to me" not "mouse trail effect"
+// - Low latency but smooth inertia
+// - Subtle response, no sharp movements
+// - Creates ambient awareness, not distraction
+
 export function CursorGlow() {
   const [mounted, setMounted] = useState(false)
   const glowRef = useRef<HTMLDivElement>(null)
   const trailRef = useRef<HTMLDivElement>(null)
-  const secondaryTrailRef = useRef<HTMLDivElement>(null)
   const position = useRef({ x: 0, y: 0 })
   const targetPosition = useRef({ x: 0, y: 0 })
 
@@ -18,31 +23,25 @@ export function CursorGlow() {
       targetPosition.current.y = e.clientY
     }
 
-    window.addEventListener("mousemove", handleMouseMove)
+    window.addEventListener("mousemove", handleMouseMove, { passive: true })
 
     let animationId: number
 
     const animate = () => {
-      // Very smooth, slow interpolation for organic feel
-      position.current.x += (targetPosition.current.x - position.current.x) * 0.08
-      position.current.y += (targetPosition.current.y - position.current.y) * 0.08
+      // Smooth interpolation - intentional lag for organic feel
+      // Not too slow (feels broken), not too fast (feels twitchy)
+      position.current.x += (targetPosition.current.x - position.current.x) * 0.06
+      position.current.y += (targetPosition.current.y - position.current.y) * 0.06
 
       if (glowRef.current) {
-        glowRef.current.style.transform = `translate(${position.current.x - 175}px, ${position.current.y - 175}px)`
+        glowRef.current.style.transform = `translate(${position.current.x - 150}px, ${position.current.y - 150}px)`
       }
 
-      // First trail - slower, larger
+      // Single trailing glow - subtler, creates depth
       if (trailRef.current) {
-        const trailX = position.current.x + (targetPosition.current.x - position.current.x) * -0.4
-        const trailY = position.current.y + (targetPosition.current.y - position.current.y) * -0.4
-        trailRef.current.style.transform = `translate(${trailX - 250}px, ${trailY - 250}px)`
-      }
-
-      // Second trail - even slower, creates depth
-      if (secondaryTrailRef.current) {
-        const trail2X = position.current.x + (targetPosition.current.x - position.current.x) * -0.7
-        const trail2Y = position.current.y + (targetPosition.current.y - position.current.y) * -0.7
-        secondaryTrailRef.current.style.transform = `translate(${trail2X - 200}px, ${trail2Y - 200}px)`
+        const trailX = position.current.x + (targetPosition.current.x - position.current.x) * -0.5
+        const trailY = position.current.y + (targetPosition.current.y - position.current.y) * -0.5
+        trailRef.current.style.transform = `translate(${trailX - 200}px, ${trailY - 200}px)`
       }
 
       animationId = requestAnimationFrame(animate)
@@ -60,49 +59,32 @@ export function CursorGlow() {
 
   return (
     <>
-      {/* Main cursor glow - purple/magenta dominant */}
+      {/* Main cursor glow - very subtle ambient presence */}
       <div
         ref={glowRef}
-        className="fixed pointer-events-none z-50 w-[350px] h-[350px] opacity-25 mix-blend-screen"
+        className="fixed pointer-events-none z-50 w-[300px] h-[300px] opacity-20 mix-blend-screen"
         style={{
           background: `radial-gradient(circle, 
-            rgba(139, 75, 158, 0.5) 0%, 
-            rgba(233, 30, 140, 0.25) 25%, 
-            rgba(43, 108, 176, 0.1) 50%, 
-            transparent 70%
+            rgba(139, 75, 158, 0.4) 0%, 
+            rgba(233, 30, 140, 0.15) 30%, 
+            transparent 60%
           )`,
-          filter: "blur(50px)",
+          filter: "blur(40px)",
           willChange: "transform",
         }}
       />
 
-      {/* Primary trailing glow - blue/cyan */}
+      {/* Subtle trailing glow - creates depth without chaos */}
       <div
         ref={trailRef}
-        className="fixed pointer-events-none z-40 w-[500px] h-[500px] opacity-15 mix-blend-screen"
+        className="fixed pointer-events-none z-40 w-[400px] h-[400px] opacity-10 mix-blend-screen"
         style={{
           background: `radial-gradient(circle, 
-            rgba(43, 108, 176, 0.4) 0%, 
-            rgba(56, 189, 248, 0.2) 30%, 
-            rgba(139, 75, 158, 0.1) 50%, 
-            transparent 70%
+            rgba(43, 108, 176, 0.3) 0%, 
+            rgba(56, 189, 248, 0.1) 40%, 
+            transparent 65%
           )`,
-          filter: "blur(80px)",
-          willChange: "transform",
-        }}
-      />
-
-      {/* Secondary trailing glow - magenta accent */}
-      <div
-        ref={secondaryTrailRef}
-        className="fixed pointer-events-none z-30 w-[400px] h-[400px] opacity-10 mix-blend-screen"
-        style={{
-          background: `radial-gradient(circle, 
-            rgba(233, 30, 140, 0.3) 0%, 
-            rgba(139, 75, 158, 0.15) 40%, 
-            transparent 70%
-          )`,
-          filter: "blur(100px)",
+          filter: "blur(60px)",
           willChange: "transform",
         }}
       />

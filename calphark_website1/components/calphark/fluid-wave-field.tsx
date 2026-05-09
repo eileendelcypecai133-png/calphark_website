@@ -2,9 +2,20 @@
 
 import { useEffect, useRef } from "react"
 
+// Living Intelligence Fluid Wave Field
+// The principle: "alive, not hyperactive"
+// - Waves subtly bend when cursor moves
+// - Energy fields react with smooth inertia
+// - Gradients morph slowly and intentionally
+// - No sharp movements, no chaos
+
 export function FluidWaveField() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const mouseRef = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 })
+  const mouseRef = useRef({ 
+    x: 0, y: 0, 
+    targetX: 0, targetY: 0,
+    velocity: { x: 0, y: 0 }
+  })
   const scrollRef = useRef(0)
 
   useEffect(() => {
@@ -16,25 +27,29 @@ export function FluidWaveField() {
 
     const resize = () => {
       canvas.width = window.innerWidth
-      canvas.height = window.innerHeight * 3 // Extended for scroll
+      canvas.height = window.innerHeight * 3
     }
     resize()
     window.addEventListener("resize", resize)
 
-    // Track mouse position with smooth interpolation
+    // Track mouse with very smooth interpolation - intentional, not jerky
     const handleMouseMove = (e: MouseEvent) => {
+      const prevTargetX = mouseRef.current.targetX
+      const prevTargetY = mouseRef.current.targetY
       mouseRef.current.targetX = e.clientX
       mouseRef.current.targetY = e.clientY + scrollRef.current
+      // Calculate velocity for subtle reactions
+      mouseRef.current.velocity.x = (e.clientX - prevTargetX) * 0.1
+      mouseRef.current.velocity.y = (e.clientY + scrollRef.current - prevTargetY) * 0.1
     }
     window.addEventListener("mousemove", handleMouseMove)
 
-    // Track scroll
     const handleScroll = () => {
       scrollRef.current = window.scrollY
     }
     window.addEventListener("scroll", handleScroll)
 
-    // Brand colors - purple, magenta, blue, cyan
+    // Brand colors - purple, magenta, blue, subtle cyan
     const colors = {
       purple: { r: 139, g: 75, b: 158 },
       magenta: { r: 233, g: 30, b: 140 },
@@ -42,152 +57,176 @@ export function FluidWaveField() {
       cyan: { r: 56, g: 189, b: 248 },
     }
 
-    // Metaball-style fluid blobs that merge and flow
-    interface FluidBlob {
-      x: number
-      y: number
+    // Organic energy nodes that respond to presence
+    interface EnergyNode {
       baseX: number
       baseY: number
+      x: number
+      y: number
       radius: number
       color: { r: number; g: number; b: number }
       phase: number
-      speed: number
-      amplitude: number
+      breathSpeed: number
+      responsiveness: number
     }
 
-    const blobs: FluidBlob[] = [
-      // Section 1 - Hero area
-      { x: 0, y: 0, baseX: 0.12, baseY: 0.08, radius: 280, color: colors.purple, phase: 0, speed: 0.0004, amplitude: 80 },
-      { x: 0, y: 0, baseX: 0.88, baseY: 0.12, radius: 320, color: colors.magenta, phase: 1.5, speed: 0.0003, amplitude: 100 },
-      { x: 0, y: 0, baseX: 0.5, baseY: 0.25, radius: 250, color: colors.blue, phase: 3, speed: 0.00035, amplitude: 70 },
-      { x: 0, y: 0, baseX: 0.2, baseY: 0.35, radius: 200, color: colors.cyan, phase: 4.5, speed: 0.00045, amplitude: 60 },
-      
-      // Section 2 - Industries
-      { x: 0, y: 0, baseX: 0.75, baseY: 0.4, radius: 300, color: colors.purple, phase: 2, speed: 0.0003, amplitude: 90 },
-      { x: 0, y: 0, baseX: 0.1, baseY: 0.5, radius: 260, color: colors.magenta, phase: 0.5, speed: 0.0004, amplitude: 75 },
-      { x: 0, y: 0, baseX: 0.6, baseY: 0.55, radius: 220, color: colors.blue, phase: 4, speed: 0.00038, amplitude: 65 },
-      
-      // Section 3 - Capabilities
-      { x: 0, y: 0, baseX: 0.3, baseY: 0.65, radius: 280, color: colors.cyan, phase: 1, speed: 0.00032, amplitude: 85 },
-      { x: 0, y: 0, baseX: 0.85, baseY: 0.7, radius: 240, color: colors.purple, phase: 3.5, speed: 0.00042, amplitude: 70 },
-      { x: 0, y: 0, baseX: 0.15, baseY: 0.75, radius: 200, color: colors.magenta, phase: 5, speed: 0.00036, amplitude: 55 },
-      
-      // Section 4 - Trust & CTA
-      { x: 0, y: 0, baseX: 0.5, baseY: 0.85, radius: 350, color: colors.blue, phase: 2.5, speed: 0.00028, amplitude: 100 },
-      { x: 0, y: 0, baseX: 0.9, baseY: 0.9, radius: 260, color: colors.cyan, phase: 0, speed: 0.0004, amplitude: 80 },
-      { x: 0, y: 0, baseX: 0.08, baseY: 0.95, radius: 220, color: colors.purple, phase: 4, speed: 0.00034, amplitude: 60 },
+    const nodes: EnergyNode[] = [
+      // Distributed across the page with varying responsiveness
+      { baseX: 0.1, baseY: 0.08, x: 0, y: 0, radius: 320, color: colors.purple, phase: 0, breathSpeed: 0.0003, responsiveness: 0.8 },
+      { baseX: 0.85, baseY: 0.15, x: 0, y: 0, radius: 380, color: colors.magenta, phase: 1.2, breathSpeed: 0.00025, responsiveness: 0.6 },
+      { baseX: 0.5, baseY: 0.22, x: 0, y: 0, radius: 280, color: colors.blue, phase: 2.4, breathSpeed: 0.00035, responsiveness: 0.9 },
+      { baseX: 0.15, baseY: 0.35, x: 0, y: 0, radius: 250, color: colors.cyan, phase: 3.6, breathSpeed: 0.0004, responsiveness: 0.5 },
+      { baseX: 0.75, baseY: 0.42, x: 0, y: 0, radius: 340, color: colors.purple, phase: 0.8, breathSpeed: 0.00028, responsiveness: 0.7 },
+      { baseX: 0.3, baseY: 0.52, x: 0, y: 0, radius: 300, color: colors.magenta, phase: 2, breathSpeed: 0.00032, responsiveness: 0.85 },
+      { baseX: 0.9, baseY: 0.6, x: 0, y: 0, radius: 260, color: colors.blue, phase: 4, breathSpeed: 0.00038, responsiveness: 0.55 },
+      { baseX: 0.2, baseY: 0.7, x: 0, y: 0, radius: 350, color: colors.cyan, phase: 1.5, breathSpeed: 0.00026, responsiveness: 0.75 },
+      { baseX: 0.6, baseY: 0.78, x: 0, y: 0, radius: 290, color: colors.purple, phase: 3, breathSpeed: 0.00034, responsiveness: 0.65 },
+      { baseX: 0.45, baseY: 0.88, x: 0, y: 0, radius: 400, color: colors.magenta, phase: 0.5, breathSpeed: 0.00022, responsiveness: 0.8 },
+      { baseX: 0.8, baseY: 0.95, x: 0, y: 0, radius: 320, color: colors.blue, phase: 2.8, breathSpeed: 0.0003, responsiveness: 0.7 },
     ]
 
-    // Organic noise function using multiple sine waves
-    const organicNoise = (x: number, y: number, t: number, seed: number) => {
-      const n1 = Math.sin(x * 0.008 + t + seed) * Math.cos(y * 0.006 + t * 0.7)
-      const n2 = Math.sin(x * 0.012 + y * 0.01 + t * 0.5 + seed * 2) * 0.5
-      const n3 = Math.cos(x * 0.005 - t * 0.3 + seed) * Math.sin(y * 0.008 + t * 0.8) * 0.3
-      return (n1 + n2 + n3) / 1.8
+    // Slow organic noise for morphing
+    const organicFlow = (x: number, y: number, t: number, seed: number) => {
+      // Very slow, flowing movement
+      const n1 = Math.sin(x * 0.003 + t * 0.5 + seed) * Math.cos(y * 0.002 + t * 0.3)
+      const n2 = Math.sin(x * 0.005 + y * 0.004 + t * 0.2 + seed * 1.5) * 0.6
+      const n3 = Math.cos(x * 0.002 - t * 0.15 + seed * 0.7) * Math.sin(y * 0.003 + t * 0.4) * 0.4
+      return (n1 + n2 + n3) / 2
     }
 
     let time = 0
 
     const animate = () => {
-      // Smooth mouse interpolation - slow, intentional
-      mouseRef.current.x += (mouseRef.current.targetX - mouseRef.current.x) * 0.02
-      mouseRef.current.y += (mouseRef.current.targetY - mouseRef.current.y) * 0.02
+      // Very smooth mouse interpolation - low latency but with inertia
+      const lerpFactor = 0.03 // Slow, intentional following
+      mouseRef.current.x += (mouseRef.current.targetX - mouseRef.current.x) * lerpFactor
+      mouseRef.current.y += (mouseRef.current.targetY - mouseRef.current.y) * lerpFactor
+      
+      // Decay velocity
+      mouseRef.current.velocity.x *= 0.95
+      mouseRef.current.velocity.y *= 0.95
 
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       time += 1
 
-      // Update blob positions with organic movement
-      blobs.forEach((blob, index) => {
-        const baseX = blob.baseX * canvas.width
-        const baseY = blob.baseY * canvas.height
+      // Update and draw energy nodes
+      nodes.forEach((node, index) => {
+        const baseX = node.baseX * canvas.width
+        const baseY = node.baseY * canvas.height
 
-        // Organic flowing movement
-        const noiseX = organicNoise(baseX, time * 0.3, time * blob.speed, index * 100)
-        const noiseY = organicNoise(time * 0.3, baseY, time * blob.speed * 1.2, index * 200)
+        // Organic breathing movement - slow and intentional
+        const flowX = organicFlow(baseX, time * 0.2, time * node.breathSpeed, index * 50)
+        const flowY = organicFlow(time * 0.2, baseY, time * node.breathSpeed * 1.1, index * 80)
         
-        blob.x = baseX + noiseX * blob.amplitude
-        blob.y = baseY + noiseY * blob.amplitude * 0.8
+        node.x = baseX + flowX * 60
+        node.y = baseY + flowY * 50
 
-        // Subtle cursor influence - blobs gently respond
-        const dx = mouseRef.current.x - blob.x
-        const dy = mouseRef.current.y - blob.y
+        // Subtle cursor response - the system responds to presence
+        const dx = mouseRef.current.x - node.x
+        const dy = mouseRef.current.y - node.y
         const dist = Math.sqrt(dx * dx + dy * dy)
-        const maxInfluence = 400
-        
+        const maxInfluence = 500
+
         if (dist < maxInfluence) {
-          const influence = (1 - dist / maxInfluence) * 0.15
-          // Some blobs attract, some repel based on index
-          const direction = index % 3 === 0 ? 1 : -0.5
-          blob.x += dx * influence * direction * 0.3
-          blob.y += dy * influence * direction * 0.3
+          // Gentle, smooth attraction/repulsion based on node responsiveness
+          const influence = Math.pow(1 - dist / maxInfluence, 2) * node.responsiveness * 0.08
+          // Nodes gently bend toward cursor, creating "the system is responding to me" feel
+          node.x += dx * influence
+          node.y += dy * influence
         }
-      })
 
-      // Draw fluid blobs with soft edges
-      blobs.forEach((blob) => {
-        // Morphing radius for organic feel
-        const morphFactor = 1 + organicNoise(blob.x * 0.01, blob.y * 0.01, time * 0.001, blob.phase * 50) * 0.2
-        const radius = blob.radius * morphFactor
+        // Morphing radius - slow breathing
+        const breathe = 1 + Math.sin(time * node.breathSpeed * 3 + node.phase) * 0.08
+        const radius = node.radius * breathe
 
-        // Multi-layer gradient for depth
+        // Multi-layer gradient for depth and softness
         const gradient = ctx.createRadialGradient(
-          blob.x, blob.y, 0,
-          blob.x, blob.y, radius
+          node.x, node.y, 0,
+          node.x, node.y, radius
         )
 
-        // Very subtle, ambient opacity - slow pulsing
-        const baseAlpha = 0.045 + Math.sin(time * blob.speed * 8 + blob.phase) * 0.015
+        // Very subtle, ambient opacity - creates depth without chaos
+        const baseAlpha = 0.035 + Math.sin(time * node.breathSpeed * 5 + node.phase) * 0.01
         
-        gradient.addColorStop(0, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, ${baseAlpha * 1.2})`)
-        gradient.addColorStop(0.3, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, ${baseAlpha * 0.8})`)
-        gradient.addColorStop(0.6, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, ${baseAlpha * 0.4})`)
-        gradient.addColorStop(0.85, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, ${baseAlpha * 0.15})`)
-        gradient.addColorStop(1, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, 0)`)
+        gradient.addColorStop(0, `rgba(${node.color.r}, ${node.color.g}, ${node.color.b}, ${baseAlpha * 1.3})`)
+        gradient.addColorStop(0.25, `rgba(${node.color.r}, ${node.color.g}, ${node.color.b}, ${baseAlpha * 0.9})`)
+        gradient.addColorStop(0.5, `rgba(${node.color.r}, ${node.color.g}, ${node.color.b}, ${baseAlpha * 0.5})`)
+        gradient.addColorStop(0.75, `rgba(${node.color.r}, ${node.color.g}, ${node.color.b}, ${baseAlpha * 0.2})`)
+        gradient.addColorStop(1, `rgba(${node.color.r}, ${node.color.g}, ${node.color.b}, 0)`)
 
         ctx.fillStyle = gradient
         ctx.fillRect(0, 0, canvas.width, canvas.height)
       })
 
-      // Flowing energy streams - very subtle
-      const streamCount = 7
+      // Energy flow streams - very subtle, continuous
+      const streamCount = 5
       for (let s = 0; s < streamCount; s++) {
         const baseY = (canvas.height / (streamCount + 1)) * (s + 1)
-        const streamColor = s % 4 === 0 ? colors.purple : s % 4 === 1 ? colors.magenta : s % 4 === 2 ? colors.blue : colors.cyan
+        const streamColor = s % 4 === 0 ? colors.purple 
+          : s % 4 === 1 ? colors.magenta 
+          : s % 4 === 2 ? colors.blue 
+          : colors.cyan
 
         ctx.beginPath()
 
-        for (let x = 0; x <= canvas.width; x += 8) {
-          const waveY = baseY +
-            Math.sin(x * 0.002 + time * 0.0008 + s * 0.5) * 40 +
-            Math.sin(x * 0.004 + time * 0.0005 + s * 1.2) * 25 +
-            organicNoise(x, s * 100, time * 0.0003, s) * 35
+        for (let x = 0; x <= canvas.width; x += 6) {
+          // Flowing wave - slow, organic
+          const wave1 = Math.sin(x * 0.0015 + time * 0.0005 + s * 0.8) * 50
+          const wave2 = Math.sin(x * 0.003 + time * 0.0003 + s * 1.5) * 30
+          const organic = organicFlow(x, s * 100, time * 0.0002, s) * 40
+          
+          let waveY = baseY + wave1 + wave2 + organic
 
-          // Subtle cursor influence on streams
+          // Streams subtly bend toward cursor
           const streamDx = mouseRef.current.x - x
           const streamDy = mouseRef.current.y - waveY
           const streamDist = Math.sqrt(streamDx * streamDx + streamDy * streamDy)
-          const streamInfluence = Math.max(0, 1 - streamDist / 350) * 20
-          const finalWaveY = waveY - streamInfluence * Math.sign(streamDy)
+          
+          if (streamDist < 400) {
+            const streamInfluence = Math.pow(1 - streamDist / 400, 2) * 25
+            waveY -= streamInfluence * Math.sign(streamDy) * 0.5
+          }
 
           if (x === 0) {
-            ctx.moveTo(x, finalWaveY)
+            ctx.moveTo(x, waveY)
           } else {
-            ctx.lineTo(x, finalWaveY)
+            ctx.lineTo(x, waveY)
           }
         }
 
         // Very subtle stream opacity
-        const streamAlpha = 0.015 + Math.sin(time * 0.0006 + s * 0.8) * 0.008
-        
+        const streamAlpha = 0.012 + Math.sin(time * 0.0004 + s * 0.9) * 0.005
+
         // Soft glow layer
-        ctx.strokeStyle = `rgba(${streamColor.r}, ${streamColor.g}, ${streamColor.b}, ${streamAlpha * 0.3})`
-        ctx.lineWidth = 12
+        ctx.strokeStyle = `rgba(${streamColor.r}, ${streamColor.g}, ${streamColor.b}, ${streamAlpha * 0.4})`
+        ctx.lineWidth = 15
         ctx.stroke()
 
         // Core line
         ctx.strokeStyle = `rgba(${streamColor.r}, ${streamColor.g}, ${streamColor.b}, ${streamAlpha})`
-        ctx.lineWidth = 2
+        ctx.lineWidth = 1.5
         ctx.stroke()
+      }
+
+      // Connection lines between nearby nodes - shows intelligence/network
+      ctx.strokeStyle = `rgba(139, 75, 158, 0.015)`
+      ctx.lineWidth = 1
+      
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x
+          const dy = nodes[i].y - nodes[j].y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          
+          if (dist < 400) {
+            const alpha = (1 - dist / 400) * 0.02
+            ctx.strokeStyle = `rgba(139, 75, 158, ${alpha})`
+            ctx.beginPath()
+            ctx.moveTo(nodes[i].x, nodes[i].y)
+            ctx.lineTo(nodes[j].x, nodes[j].y)
+            ctx.stroke()
+          }
+        }
       }
 
       requestAnimationFrame(animate)

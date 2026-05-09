@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react"
 import { CheckCircle2 } from "lucide-react"
-import { ScrollReveal, HoverEffect, MagneticHover } from "./scroll-reveal"
+import { ScrollReveal, MagneticHover } from "./scroll-reveal"
+import { IntelligentCard, SectionTransition, KineticUnderline } from "./intelligent-interactions"
 
 const stats = [
   { value: "500+", label: "Enterprise Clients" },
@@ -84,7 +85,7 @@ export function CalpharkTrust() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           {/* Content */}
-          <div>
+          <SectionTransition variant="gradient-flow">
             <ScrollReveal delay={0} direction="right">
               <span className="inline-flex items-center gap-2 text-sm font-medium uppercase tracking-wider mb-4 px-4 py-2 rounded-full bg-gradient-to-r from-brand-magenta/10 via-brand-purple/10 to-brand-blue/10 border border-brand-purple/20 transition-all duration-500 hover:border-brand-purple/40">
                 <span className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-magenta to-brand-purple animate-pulse" />
@@ -96,7 +97,7 @@ export function CalpharkTrust() {
             
             <ScrollReveal delay={100} direction="right">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 text-balance">
-                Enterprise Trust,{" "}
+                <KineticUnderline>Enterprise Trust</KineticUnderline>,{" "}
                 <span className="bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-blue bg-clip-text text-transparent">
                   Startup Agility
                 </span>
@@ -128,7 +129,7 @@ export function CalpharkTrust() {
                 </ScrollReveal>
               ))}
             </div>
-          </div>
+          </SectionTransition>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-6">
@@ -138,60 +139,18 @@ export function CalpharkTrust() {
                 delay={100 + index * 100}
                 direction="left"
               >
-                <HoverEffect intensity="medium">
-                  <div className="group relative p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-brand-purple/10 text-center transition-all duration-500 hover:shadow-2xl hover:shadow-brand-purple/15 hover:border-brand-purple/30 overflow-hidden cursor-pointer">
-                    {/* Animated background */}
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-brand-magenta/0 via-brand-purple/0 to-brand-blue/0 group-hover:from-brand-magenta/5 group-hover:via-brand-purple/5 group-hover:to-brand-blue/5 transition-all duration-500" />
-
-                    {/* Scan line */}
-                    <div className="absolute inset-0 overflow-hidden rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-brand-magenta/40 to-transparent animate-scan-line" />
-                    </div>
-
+                <IntelligentCard>
+                  <div className="relative p-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-brand-purple/10 text-center transition-all duration-500 overflow-hidden">
                     <div className="relative">
-                      <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-blue bg-clip-text text-transparent mb-2 transition-all duration-300 group-hover:scale-110">
+                      <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-blue bg-clip-text text-transparent mb-2">
                         {formatValue(index)}
                       </div>
                       <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">
                         {stat.label}
                       </div>
                     </div>
-
-                    {/* Corner accents */}
-                    <div className="absolute top-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <svg viewBox="0 0 32 32" className="w-full h-full">
-                        <path
-                          d="M0 0 L32 0 L32 32"
-                          fill="none"
-                          stroke="url(#trustCorner)"
-                          strokeWidth="2"
-                        />
-                        <defs>
-                          <linearGradient id="trustCorner" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#E91E8C" />
-                            <stop offset="100%" stopColor="#2B6CB0" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                    <div className="absolute bottom-0 left-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <svg viewBox="0 0 32 32" className="w-full h-full">
-                        <path
-                          d="M32 32 L0 32 L0 0"
-                          fill="none"
-                          stroke="url(#trustCorner2)"
-                          strokeWidth="2"
-                        />
-                        <defs>
-                          <linearGradient id="trustCorner2" x1="100%" y1="100%" x2="0%" y2="0%">
-                            <stop offset="0%" stopColor="#2B6CB0" />
-                            <stop offset="100%" stopColor="#E91E8C" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
                   </div>
-                </HoverEffect>
+                </IntelligentCard>
               </ScrollReveal>
             ))}
           </div>

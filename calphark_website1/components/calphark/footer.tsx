@@ -71,8 +71,8 @@ export function CalpharkFooter() {
                 <span className="text-xl font-bold bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-blue bg-clip-text text-transparent">
                   Calphark
                 </span>
-                <span className="text-[10px] text-muted-foreground tracking-widest uppercase">
-                  Guided by Intelligence
+                <span className="text-[9px] text-muted-foreground tracking-widest uppercase whitespace-nowrap">
+                  Guided by Intelligence, Driven by Purpose
                 </span>
               </div>
             </Link>
