@@ -1,32 +1,14 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
-// Multicolored Flicker Orbs - Living Intelligence
-// Brand colors: purple, magenta, blue, cyan
-// Interactive, bouncing, alive but controlled
-// Like Lovable's loading - mesmerizing but intentional
-
-interface Orb {
-  id: number
-  x: number
-  y: number
-  vx: number
-  vy: number
-  radius: number
-  baseRadius: number
-  color: string
-  colorRgb: { r: number; g: number; b: number }
-  pulsePhase: number
-  pulseSpeed: number
-  flickerPhase: number
-  glowIntensity: number
-}
+// Fast Multicolored Waves - Living Intelligence
+// Brand colors: magenta, purple, blue, cyan
+// Water-like waves that flow fast and react to cursor
 
 export function FlickerOrbs() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const mouseRef = useRef({ x: -1000, y: -1000, active: false })
-  const orbsRef = useRef<Orb[]>([])
   const animationRef = useRef<number>(0)
 
   useEffect(() => {
@@ -38,52 +20,26 @@ export function FlickerOrbs() {
 
     // Brand colors - exact palette
     const brandColors = [
-      { name: "magenta", r: 233, g: 30, b: 140, hex: "#E91E8C" },
-      { name: "purple", r: 139, g: 75, b: 158, hex: "#8B4B9E" },
-      { name: "blue", r: 43, g: 108, b: 176, hex: "#2B6CB0" },
-      { name: "cyan", r: 56, g: 189, b: 248, hex: "#38BDF8" },
+      { r: 233, g: 30, b: 140 },   // Magenta #E91E8C
+      { r: 139, g: 75, b: 158 },   // Purple #8B4B9E
+      { r: 43, g: 108, b: 176 },   // Blue #2B6CB0
+      { r: 56, g: 189, b: 248 },   // Cyan #38BDF8
     ]
 
+    let width = 0
+    let height = 0
+
     const resize = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-      
-      // Initialize orbs if not already done
-      if (orbsRef.current.length === 0) {
-        initOrbs()
-      }
-    }
-
-    const initOrbs = () => {
-      const orbCount = Math.min(Math.floor(window.innerWidth / 80), 18)
-      orbsRef.current = []
-
-      for (let i = 0; i < orbCount; i++) {
-        const color = brandColors[i % brandColors.length]
-        const baseRadius = 25 + Math.random() * 35
-
-        orbsRef.current.push({
-          id: i,
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          vx: (Math.random() - 0.5) * 1.2, // Slow, intentional movement
-          vy: (Math.random() - 0.5) * 1.2,
-          radius: baseRadius,
-          baseRadius: baseRadius,
-          color: color.hex,
-          colorRgb: { r: color.r, g: color.g, b: color.b },
-          pulsePhase: Math.random() * Math.PI * 2,
-          pulseSpeed: 0.015 + Math.random() * 0.01, // Slow pulse
-          flickerPhase: Math.random() * Math.PI * 2,
-          glowIntensity: 0.6 + Math.random() * 0.4,
-        })
-      }
+      width = window.innerWidth
+      height = window.innerHeight
+      canvas.width = width
+      canvas.height = height
     }
 
     resize()
     window.addEventListener("resize", resize)
 
-    // Mouse tracking - smooth, intentional
+    // Mouse tracking
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect()
       mouseRef.current.x = e.clientX - rect.left
@@ -101,146 +57,177 @@ export function FlickerOrbs() {
     let time = 0
 
     const animate = () => {
-      time += 1
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      time += 0.025 // Fast animation speed
+      ctx.clearRect(0, 0, width, height)
 
-      const orbs = orbsRef.current
+      const mouse = mouseRef.current
 
-      // Update and draw orbs
-      orbs.forEach((orb) => {
-        // Update pulse
-        orb.pulsePhase += orb.pulseSpeed
-        orb.flickerPhase += 0.03
+      // Draw multiple wave layers - each with different brand color
+      brandColors.forEach((color, colorIndex) => {
+        const layerOffset = colorIndex * 0.8 // Offset each layer
+        const baseSpeed = 2.5 + colorIndex * 0.4 // Different speeds per layer
+        const amplitude = 60 + colorIndex * 20 // Different amplitudes
+        const waveCount = 4 + colorIndex // Different wave frequencies
 
-        // Pulsing radius - breathing effect
-        const pulseFactor = 1 + Math.sin(orb.pulsePhase) * 0.15
-        orb.radius = orb.baseRadius * pulseFactor
+        ctx.beginPath()
 
-        // Flicker intensity - subtle brightness variation
-        const flickerFactor = 0.85 + Math.sin(orb.flickerPhase * 2.3) * 0.1 + Math.sin(orb.flickerPhase * 3.7) * 0.05
-        orb.glowIntensity = Math.max(0.5, Math.min(1, flickerFactor))
+        // Start from bottom left
+        ctx.moveTo(0, height)
 
-        // Mouse interaction - orbs are attracted/repelled gently
-        if (mouseRef.current.active) {
-          const dx = mouseRef.current.x - orb.x
-          const dy = mouseRef.current.y - orb.y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          const interactionRadius = 250
+        // Draw wave across the canvas
+        for (let x = 0; x <= width; x += 3) {
+          // Multiple sine waves combined for organic water effect
+          let y = height * (0.4 + colorIndex * 0.12) // Base position varies per layer
 
-          if (dist < interactionRadius) {
-            // Gentle attraction toward cursor - "awareness" not explosion
-            const force = (1 - dist / interactionRadius) * 0.15
-            orb.vx += (dx / dist) * force
-            orb.vy += (dy / dist) * force
+          // Primary wave - fast horizontal movement
+          y += Math.sin((x * 0.008 * waveCount) + (time * baseSpeed) + layerOffset) * amplitude
+
+          // Secondary wave - creates complexity
+          y += Math.sin((x * 0.004 * waveCount) - (time * baseSpeed * 0.7) + layerOffset * 2) * (amplitude * 0.5)
+
+          // Tertiary wave - fine detail
+          y += Math.sin((x * 0.015 * waveCount) + (time * baseSpeed * 1.3)) * (amplitude * 0.25)
+
+          // Mouse interaction - waves bulge toward cursor
+          if (mouse.active) {
+            const dx = x - mouse.x
+            const dy = y - mouse.y
+            const dist = Math.sqrt(dx * dx + dy * dy)
+            const interactionRadius = 300
+
+            if (dist < interactionRadius) {
+              const force = (1 - dist / interactionRadius) * 80
+              // Waves rise toward cursor
+              y -= force * Math.sin(time * 5 + dist * 0.02)
+            }
           }
+
+          // Vertical ripple effect
+          y += Math.sin(time * 4 + x * 0.01) * 8
+
+          ctx.lineTo(x, y)
         }
 
-        // Apply velocity with damping - smooth, controlled movement
-        orb.x += orb.vx
-        orb.y += orb.vy
-        orb.vx *= 0.98 // Friction
-        orb.vy *= 0.98
+        // Complete the shape
+        ctx.lineTo(width, height)
+        ctx.lineTo(0, height)
+        ctx.closePath()
 
-        // Bounce off walls - soft bounce
-        const margin = orb.radius
-        if (orb.x < margin) {
-          orb.x = margin
-          orb.vx = Math.abs(orb.vx) * 0.7
-        } else if (orb.x > canvas.width - margin) {
-          orb.x = canvas.width - margin
-          orb.vx = -Math.abs(orb.vx) * 0.7
-        }
-        if (orb.y < margin) {
-          orb.y = margin
-          orb.vy = Math.abs(orb.vy) * 0.7
-        } else if (orb.y > canvas.height - margin) {
-          orb.y = canvas.height - margin
-          orb.vy = -Math.abs(orb.vy) * 0.7
-        }
+        // Gradient fill for each wave layer
+        const gradient = ctx.createLinearGradient(0, 0, width, height)
+        const alpha = 0.35 - colorIndex * 0.06 // Front layers more opaque
+        gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`)
+        gradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 1.2})`)
+        gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha * 0.8})`)
 
-        // Add subtle random drift - "alive" movement
-        orb.vx += (Math.random() - 0.5) * 0.02
-        orb.vy += (Math.random() - 0.5) * 0.02
-
-        // Speed limit - never chaotic
-        const maxSpeed = 2
-        const speed = Math.sqrt(orb.vx * orb.vx + orb.vy * orb.vy)
-        if (speed > maxSpeed) {
-          orb.vx = (orb.vx / speed) * maxSpeed
-          orb.vy = (orb.vy / speed) * maxSpeed
-        }
+        ctx.fillStyle = gradient
+        ctx.fill()
       })
 
-      // Draw connection lines between nearby orbs - neural network feel
-      ctx.lineWidth = 1
-      for (let i = 0; i < orbs.length; i++) {
-        for (let j = i + 1; j < orbs.length; j++) {
-          const dx = orbs[i].x - orbs[j].x
-          const dy = orbs[i].y - orbs[j].y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-          const connectionDist = 180
+      // Draw fast-moving horizontal wave lines - like water surface
+      for (let i = 0; i < 8; i++) {
+        const color = brandColors[i % brandColors.length]
+        const yBase = height * (0.25 + i * 0.08)
+        const speed = 3 + i * 0.3
+        const lineAlpha = 0.4 - i * 0.03
 
-          if (dist < connectionDist) {
-            const alpha = (1 - dist / connectionDist) * 0.15 * orbs[i].glowIntensity * orbs[j].glowIntensity
-            
-            // Gradient line
-            const gradient = ctx.createLinearGradient(orbs[i].x, orbs[i].y, orbs[j].x, orbs[j].y)
-            gradient.addColorStop(0, `rgba(${orbs[i].colorRgb.r}, ${orbs[i].colorRgb.g}, ${orbs[i].colorRgb.b}, ${alpha})`)
-            gradient.addColorStop(1, `rgba(${orbs[j].colorRgb.r}, ${orbs[j].colorRgb.g}, ${orbs[j].colorRgb.b}, ${alpha})`)
-            
-            ctx.strokeStyle = gradient
-            ctx.beginPath()
-            ctx.moveTo(orbs[i].x, orbs[i].y)
-            ctx.lineTo(orbs[j].x, orbs[j].y)
-            ctx.stroke()
+        ctx.beginPath()
+        ctx.lineWidth = 2 - i * 0.15
+
+        for (let x = 0; x <= width; x += 4) {
+          let y = yBase
+          y += Math.sin((x * 0.012) + (time * speed) + i) * (30 + i * 5)
+          y += Math.sin((x * 0.006) - (time * speed * 0.8)) * (20 + i * 3)
+
+          // Mouse ripple effect
+          if (mouse.active) {
+            const dx = x - mouse.x
+            const dy = y - mouse.y
+            const dist = Math.sqrt(dx * dx + dy * dy)
+            if (dist < 250) {
+              y += Math.sin(dist * 0.05 - time * 8) * (1 - dist / 250) * 40
+            }
+          }
+
+          if (x === 0) {
+            ctx.moveTo(x, y)
+          } else {
+            ctx.lineTo(x, y)
           }
         }
+
+        const gradient = ctx.createLinearGradient(0, yBase - 50, width, yBase + 50)
+        gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${lineAlpha})`)
+        gradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, ${lineAlpha * 1.5})`)
+        gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, ${lineAlpha * 0.5})`)
+
+        ctx.strokeStyle = gradient
+        ctx.stroke()
       }
 
-      // Draw orbs with multi-layer glow
-      orbs.forEach((orb) => {
-        const { x, y, radius, colorRgb, glowIntensity } = orb
+      // Draw flowing particles on wave crests
+      for (let i = 0; i < 40; i++) {
+        const color = brandColors[i % brandColors.length]
+        const xBase = (i * width / 40 + time * 80) % (width + 100) - 50
+        const wavePhase = i * 0.5
+        const speed = 2 + (i % 4) * 0.3
 
-        // Outer glow (largest, softest)
-        const outerGlow = ctx.createRadialGradient(x, y, 0, x, y, radius * 3)
-        outerGlow.addColorStop(0, `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, ${0.08 * glowIntensity})`)
-        outerGlow.addColorStop(0.5, `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, ${0.03 * glowIntensity})`)
-        outerGlow.addColorStop(1, `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, 0)`)
-        ctx.fillStyle = outerGlow
+        let y = height * 0.35
+        y += Math.sin((xBase * 0.01) + (time * speed) + wavePhase) * 50
+        y += Math.sin((xBase * 0.005) - (time * speed * 0.6)) * 30
+
+        // Particle size pulses
+        const size = 3 + Math.sin(time * 4 + i) * 1.5
+
+        // Glow effect
+        const glowGradient = ctx.createRadialGradient(xBase, y, 0, xBase, y, size * 4)
+        glowGradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, 0.6)`)
+        glowGradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, 0.2)`)
+        glowGradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`)
+
+        ctx.fillStyle = glowGradient
         ctx.beginPath()
-        ctx.arc(x, y, radius * 3, 0, Math.PI * 2)
+        ctx.arc(xBase, y, size * 4, 0, Math.PI * 2)
         ctx.fill()
 
-        // Middle glow
-        const midGlow = ctx.createRadialGradient(x, y, 0, x, y, radius * 2)
-        midGlow.addColorStop(0, `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, ${0.2 * glowIntensity})`)
-        midGlow.addColorStop(0.6, `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, ${0.08 * glowIntensity})`)
-        midGlow.addColorStop(1, `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, 0)`)
-        ctx.fillStyle = midGlow
+        // Core particle
+        ctx.fillStyle = `rgba(255, 255, 255, 0.8)`
         ctx.beginPath()
-        ctx.arc(x, y, radius * 2, 0, Math.PI * 2)
+        ctx.arc(xBase, y, size * 0.5, 0, Math.PI * 2)
         ctx.fill()
+      }
 
-        // Core orb (brightest)
-        const coreGlow = ctx.createRadialGradient(x, y, 0, x, y, radius)
-        coreGlow.addColorStop(0, `rgba(255, 255, 255, ${0.6 * glowIntensity})`)
-        coreGlow.addColorStop(0.2, `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, ${0.8 * glowIntensity})`)
-        coreGlow.addColorStop(0.6, `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, ${0.4 * glowIntensity})`)
-        coreGlow.addColorStop(1, `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, 0)`)
-        ctx.fillStyle = coreGlow
-        ctx.beginPath()
-        ctx.arc(x, y, radius, 0, Math.PI * 2)
-        ctx.fill()
+      // Top shimmer effect - fast moving highlights
+      for (let i = 0; i < 15; i++) {
+        const color = brandColors[i % brandColors.length]
+        const x = (i * width / 15 + time * 120) % (width + 200) - 100
+        const y = 50 + Math.sin(time * 3 + i * 0.7) * 30
 
-        // Inner bright spot
-        const innerSpot = ctx.createRadialGradient(x - radius * 0.2, y - radius * 0.2, 0, x, y, radius * 0.6)
-        innerSpot.addColorStop(0, `rgba(255, 255, 255, ${0.5 * glowIntensity})`)
-        innerSpot.addColorStop(1, `rgba(255, 255, 255, 0)`)
-        ctx.fillStyle = innerSpot
+        const shimmerGradient = ctx.createRadialGradient(x, y, 0, x, y, 60)
+        shimmerGradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, 0.15)`)
+        shimmerGradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, 0.05)`)
+        shimmerGradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`)
+
+        ctx.fillStyle = shimmerGradient
         ctx.beginPath()
-        ctx.arc(x, y, radius * 0.6, 0, Math.PI * 2)
+        ctx.ellipse(x, y, 80, 30, 0, 0, Math.PI * 2)
         ctx.fill()
-      })
+      }
+
+      // Mouse cursor creates ripple rings
+      if (mouse.active) {
+        for (let ring = 0; ring < 4; ring++) {
+          const ringRadius = 30 + ring * 40 + Math.sin(time * 6) * 10
+          const color = brandColors[ring % brandColors.length]
+          const alpha = (0.4 - ring * 0.08) * (0.5 + Math.sin(time * 8 + ring) * 0.5)
+
+          ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`
+          ctx.lineWidth = 2 - ring * 0.3
+          ctx.beginPath()
+          ctx.arc(mouse.x, mouse.y, ringRadius, 0, Math.PI * 2)
+          ctx.stroke()
+        }
+      }
 
       animationRef.current = requestAnimationFrame(animate)
     }
