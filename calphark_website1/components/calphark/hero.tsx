@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { AIButton } from "./ai-button"
 import { ArrowRight, Sparkles } from "lucide-react"
+import { ScrollReveal, HoverEffect, MagneticHover } from "./scroll-reveal"
 
 export function CalpharkHero() {
   const logoRef = useRef<HTMLDivElement>(null)
@@ -19,8 +20,8 @@ export function CalpharkHero() {
       const rect = logoRef.current.getBoundingClientRect()
       const centerX = rect.left + rect.width / 2
       const centerY = rect.top + rect.height / 2
-      const x = (e.clientX - centerX) / 25
-      const y = (e.clientY - centerY) / 25
+      const x = (e.clientX - centerX) / 30
+      const y = (e.clientY - centerY) / 30
       setMousePos({ x, y })
     }
 
@@ -33,79 +34,93 @@ export function CalpharkHero() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-32">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Content */}
-          <div 
-            className={`space-y-8 text-center lg:text-left order-2 lg:order-1 transition-all duration-1000 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
+          <div className="space-y-8 text-center lg:text-left order-2 lg:order-1">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-brand-magenta/10 via-brand-purple/10 to-brand-blue/10 border border-brand-purple/20 backdrop-blur-sm">
-              <Sparkles className="w-4 h-4 text-brand-magenta" />
-              <span className="text-sm font-medium bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-blue bg-clip-text text-transparent">
-                Enterprise AI Solutions
-              </span>
-            </div>
+            <ScrollReveal delay={100} direction="up">
+              <MagneticHover strength={0.2}>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-brand-magenta/10 via-brand-purple/10 to-brand-blue/10 border border-brand-purple/20 backdrop-blur-sm transition-all duration-500 hover:border-brand-purple/40 hover:shadow-lg hover:shadow-brand-purple/10">
+                  <Sparkles className="w-4 h-4 text-brand-magenta animate-pulse" />
+                  <span className="text-sm font-medium bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-blue bg-clip-text text-transparent">
+                    Enterprise AI Solutions
+                  </span>
+                </div>
+              </MagneticHover>
+            </ScrollReveal>
 
-            {/* Tagline */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-balance">
-              <span className="text-foreground">Guided by</span>{" "}
-              <span className="bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-blue bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
-                Intelligence
-              </span>
-              <br />
-              <span className="text-foreground">Driven by</span>{" "}
-              <span className="bg-gradient-to-r from-brand-blue via-brand-purple to-brand-magenta bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
-                Purpose
-              </span>
-            </h1>
+            {/* Tagline - "Guided by Intelligence, Driven by Purpose" */}
+            <ScrollReveal delay={200} direction="up">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-balance">
+                <span className="text-foreground">Guided by</span>{" "}
+                <span className="bg-gradient-to-r from-brand-magenta via-brand-purple to-brand-blue bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                  Intelligence
+                </span>
+                <br />
+                <span className="text-foreground">Driven by</span>{" "}
+                <span className="bg-gradient-to-r from-brand-blue via-brand-purple to-brand-magenta bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
+                  Purpose
+                </span>
+              </h1>
+            </ScrollReveal>
 
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Transform your enterprise with intelligent AI solutions tailored to your industry. 
-              We deliver measurable results through cutting-edge technology and deep domain expertise.
-            </p>
+            <ScrollReveal delay={300} direction="up">
+              <p className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                Transform your enterprise with intelligent AI solutions tailored to your industry. 
+                We deliver measurable results through cutting-edge technology and deep domain expertise.
+              </p>
+            </ScrollReveal>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <AIButton variant="primary" size="lg">
-                Explore Solutions
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-              </AIButton>
-              <AIButton variant="outline" size="lg">
-                Schedule Consultation
-              </AIButton>
-            </div>
+            <ScrollReveal delay={400} direction="up">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <MagneticHover strength={0.15}>
+                  <AIButton variant="primary" size="lg">
+                    Explore Solutions
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </AIButton>
+                </MagneticHover>
+                <MagneticHover strength={0.15}>
+                  <AIButton variant="outline" size="lg">
+                    Schedule Consultation
+                  </AIButton>
+                </MagneticHover>
+              </div>
+            </ScrollReveal>
 
             {/* Trust indicators */}
-            <div className="flex items-center gap-8 justify-center lg:justify-start pt-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold bg-gradient-to-r from-brand-magenta to-brand-purple bg-clip-text text-transparent">
-                  500+
-                </div>
-                <div className="text-xs text-muted-foreground">Enterprise Clients</div>
+            <ScrollReveal delay={500} direction="up">
+              <div className="flex items-center gap-8 justify-center lg:justify-start pt-4">
+                <HoverEffect intensity="subtle">
+                  <div className="text-center cursor-pointer">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-brand-magenta to-brand-purple bg-clip-text text-transparent transition-transform duration-300 hover:scale-110">
+                      500+
+                    </div>
+                    <div className="text-xs text-muted-foreground">Enterprise Clients</div>
+                  </div>
+                </HoverEffect>
+                <div className="w-px h-10 bg-gradient-to-b from-transparent via-brand-purple/30 to-transparent" />
+                <HoverEffect intensity="subtle">
+                  <div className="text-center cursor-pointer">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-brand-purple to-brand-blue bg-clip-text text-transparent transition-transform duration-300 hover:scale-110">
+                      99.9%
+                    </div>
+                    <div className="text-xs text-muted-foreground">Uptime SLA</div>
+                  </div>
+                </HoverEffect>
+                <div className="w-px h-10 bg-gradient-to-b from-transparent via-brand-purple/30 to-transparent" />
+                <HoverEffect intensity="subtle">
+                  <div className="text-center cursor-pointer">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-brand-blue to-brand-magenta bg-clip-text text-transparent transition-transform duration-300 hover:scale-110">
+                      24/7
+                    </div>
+                    <div className="text-xs text-muted-foreground">Global Support</div>
+                  </div>
+                </HoverEffect>
               </div>
-              <div className="w-px h-10 bg-gradient-to-b from-transparent via-brand-purple/30 to-transparent" />
-              <div className="text-center">
-                <div className="text-2xl font-bold bg-gradient-to-r from-brand-purple to-brand-blue bg-clip-text text-transparent">
-                  99.9%
-                </div>
-                <div className="text-xs text-muted-foreground">Uptime SLA</div>
-              </div>
-              <div className="w-px h-10 bg-gradient-to-b from-transparent via-brand-purple/30 to-transparent" />
-              <div className="text-center">
-                <div className="text-2xl font-bold bg-gradient-to-r from-brand-blue to-brand-magenta bg-clip-text text-transparent">
-                  24/7
-                </div>
-                <div className="text-xs text-muted-foreground">Global Support</div>
-              </div>
-            </div>
+            </ScrollReveal>
           </div>
 
           {/* 3D Animated Logo */}
-          <div 
-            className={`order-1 lg:order-2 flex justify-center transition-all duration-1000 delay-300 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
+          <ScrollReveal delay={200} direction="scale" className="order-1 lg:order-2 flex justify-center">
             <div
               ref={logoRef}
               className="relative w-72 h-72 md:w-96 md:h-96 cursor-pointer"
@@ -113,7 +128,7 @@ export function CalpharkHero() {
               onMouseLeave={() => setIsHovering(false)}
               style={{
                 transform: `perspective(1000px) rotateY(${mousePos.x}deg) rotateX(${-mousePos.y}deg)`,
-                transition: "transform 0.1s ease-out",
+                transition: "transform 0.15s ease-out",
               }}
             >
               {/* Outer rotating ring */}
@@ -167,7 +182,7 @@ export function CalpharkHero() {
               </svg>
 
               {/* Main logo container */}
-              <div className={`absolute inset-12 rounded-full bg-white/90 backdrop-blur-xl shadow-2xl flex items-center justify-center transition-all duration-500 ${isHovering ? "scale-105" : ""}`}>
+              <div className={`absolute inset-12 rounded-full bg-white/90 backdrop-blur-xl shadow-2xl flex items-center justify-center transition-all duration-500 ${isHovering ? "scale-105 shadow-brand-purple/30" : ""}`}>
                 {/* Gradient border */}
                 <div className="absolute inset-0 rounded-full p-[3px] bg-gradient-to-br from-brand-magenta via-brand-purple to-brand-blue">
                   <div className="w-full h-full rounded-full bg-white" />
@@ -191,22 +206,22 @@ export function CalpharkHero() {
                   />
                 </div>
               </div>
-
-
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
-        <span className="text-xs text-muted-foreground uppercase tracking-wider">
-          Scroll to explore
-        </span>
-        <div className="w-6 h-10 rounded-full border-2 border-brand-purple/30 flex items-start justify-center p-2">
-          <div className="w-1.5 h-3 rounded-full bg-gradient-to-b from-brand-magenta to-brand-blue animate-bounce" />
+      <ScrollReveal delay={800} direction="fade" className="absolute bottom-8 left-1/2 -translate-x-1/2">
+        <div className="flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
+          <span className="text-xs text-muted-foreground uppercase tracking-wider">
+            Scroll to explore
+          </span>
+          <div className="w-6 h-10 rounded-full border-2 border-brand-purple/30 flex items-start justify-center p-2 hover:border-brand-purple/50 transition-colors duration-300">
+            <div className="w-1.5 h-3 rounded-full bg-gradient-to-b from-brand-magenta to-brand-blue animate-bounce" />
+          </div>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   )
 }

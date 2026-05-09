@@ -54,7 +54,7 @@ export function CalpharkHeader() {
                 Calphark
               </span>
               <span className="text-[10px] text-muted-foreground tracking-widest uppercase">
-                Intelligence Driven
+                Guided by Intelligence
               </span>
             </div>
           </Link>
