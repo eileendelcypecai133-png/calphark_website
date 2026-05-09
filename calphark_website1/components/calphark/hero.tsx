@@ -5,6 +5,7 @@ import Image from "next/image"
 import { AIButton } from "./ai-button"
 import { ArrowRight, Sparkles } from "lucide-react"
 import { ScrollReveal, HoverEffect, MagneticHover } from "./scroll-reveal"
+import { FlickerOrbs } from "./flicker-orbs"
 
 export function CalpharkHero() {
   const logoRef = useRef<HTMLDivElement>(null)
@@ -31,7 +32,12 @@ export function CalpharkHero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-32">
+      {/* Multicolored Flicker Orbs - Living Intelligence Background */}
+      <div className="absolute inset-0 z-0">
+        <FlickerOrbs />
+      </div>
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-20 lg:py-32">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Content */}
           <div className="space-y-8 text-center lg:text-left order-2 lg:order-1">
@@ -212,7 +218,7 @@ export function CalpharkHero() {
       </div>
 
       {/* Scroll indicator */}
-      <ScrollReveal delay={800} direction="fade" className="absolute bottom-8 left-1/2 -translate-x-1/2">
+      <ScrollReveal delay={800} direction="fade" className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
         <div className="flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
           <span className="text-xs text-muted-foreground uppercase tracking-wider">
             Scroll to explore
